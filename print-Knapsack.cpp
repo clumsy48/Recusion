@@ -3,9 +3,11 @@
 #include <cmath>
 #include <algorithm>
 #include <map>
+#include <set>
 #include <utility>
 using namespace std;
 map<pair<int,int>,int > mymap;
+set<int> myset;
 int maxValue(int value[],int weight[],int n,int kw){
     if(n<=0) return 0;
     if(kw<0) return 0;
@@ -14,9 +16,7 @@ int maxValue(int value[],int weight[],int n,int kw){
     }
     int x=0,y=0;
     if(weight[n-1]<=kw){
-        
           x = maxValue(value,weight,n-1,kw-weight[n-1])+value[n-1];
-       
           y = maxValue(value,weight,n-1,kw);
           mymap[{n,kw}] =  max(x,y);
           return mymap[{n,kw}];
@@ -30,25 +30,32 @@ void printStones(int weight[],int kw,int n){
         int x = mymap[{i,j}];
         int y = mymap[{i-1,j}];
         int z = mymap[{i,j-1}];
-     //   cout << "i "<< i << " " <<" j " << j << endl;
+        cout << "i "<< i << " " <<" j " << j << endl;
      //   cout << "x " << x << " y " << y << " z " << z << endl; 
         if(y==z && y==0){
             if(x!=0){
-                cout << i << "\n";
+                myset.insert(i);
+//cout << i << "\n";
             } 
             break; 
         }if(y==z){
-            if(x>y) cout << i << "\n";
-            i--;
+            if(x>y){
+                myset.insert(i);
+//cout << i << "\n";
+                j = j-weight[i-1];
+            } 
+            j--;
         }else if(y>z){
             if(x>y){
-                 cout << i << "\n";
+                 myset.insert(i);
+               //  cout << i << "\n";
                  j = j-weight[i-1];
             }else i--;
             
         }else if(y<z){
             if(x>z){
-              cout << j << "\n"; 
+                myset.insert(j);
+             // cout << j << "\n"; 
               j = j-weight[i-1];
             }else j--;
         }
@@ -56,12 +63,13 @@ void printStones(int weight[],int kw,int n){
 }
 int main()
 {
-    int weight[] = {2,3,4,5};
-    int value[] = {3,4,5,6}; 
-    int kw = 5;
+    int weight[] = {1,2,3,2,2};
+    int value[] = {8,4,0,8,0}; 
+    int kw = 4;
     int n = sizeof(value)/sizeof(int);
     cout << maxValue(value,weight,n,kw) << endl;
-   // for(auto i=mymap.begin();i!=mymap.end();++i) cout << (*i).first.first <<" " << (*i).first.second << " " << (*i).second << endl;
+    for(auto i=mymap.begin();i!=mymap.end();++i) cout << (*i).first.first <<" " << (*i).first.second << " " << (*i).second << endl;
     printStones(weight,kw,n);
+    for(auto i=myset.begin();i!=myset.end();++i) cout << *i << " ";
     return 0;
 }
